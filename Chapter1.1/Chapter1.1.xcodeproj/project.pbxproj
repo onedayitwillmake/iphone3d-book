@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1D3623260D0F684500981E51 /* Chapter1_1AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* Chapter1_1AppDelegate.m */; };
+		1D3623260D0F684500981E51 /* Chapter1_1AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* Chapter1_1AppDelegate.mm */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
@@ -16,12 +16,15 @@
 		4863D098130B8DE70077B8AA /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4863D097130B8DE70077B8AA /* OpenGLES.framework */; };
 		4863D09A130B8DE70077B8AA /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4863D099130B8DE70077B8AA /* QuartzCore.framework */; };
 		4863D09D130B8E7E0077B8AA /* GLView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4863D09C130B8E7E0077B8AA /* GLView.mm */; };
+		EDD622F1130C4A1800C42341 /* RenderingEngine1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EDD622F0130C4A1800C42341 /* RenderingEngine1.cpp */; };
+		EDD6251B130C5E1700C42341 /* Simple.vert in Sources */ = {isa = PBXBuildFile; fileRef = EDD6251A130C5E1700C42341 /* Simple.vert */; };
+		EDD6251D130C5E4700C42341 /* Simple.frag in Sources */ = {isa = PBXBuildFile; fileRef = EDD6251C130C5E4700C42341 /* Simple.frag */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D3623240D0F684500981E51 /* Chapter1_1AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Chapter1_1AppDelegate.h; sourceTree = "<group>"; };
-		1D3623250D0F684500981E51 /* Chapter1_1AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Chapter1_1AppDelegate.m; sourceTree = "<group>"; };
+		1D3623250D0F684500981E51 /* Chapter1_1AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Chapter1_1AppDelegate.mm; sourceTree = "<group>"; };
 		1D6058910D05DD3D006BFB54 /* Chapter1.1.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chapter1.1.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -33,6 +36,10 @@
 		4863D09B130B8E7E0077B8AA /* GLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLView.h; sourceTree = "<group>"; };
 		4863D09C130B8E7E0077B8AA /* GLView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GLView.mm; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Chapter1_1-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Chapter1_1-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
+		EDD622E0130C45F400C42341 /* IRenderingEngine.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = IRenderingEngine.hpp; sourceTree = "<group>"; };
+		EDD622F0130C4A1800C42341 /* RenderingEngine1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderingEngine1.cpp; sourceTree = "<group>"; };
+		EDD6251A130C5E1700C42341 /* Simple.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Simple.vert; sourceTree = "<group>"; };
+		EDD6251C130C5E4700C42341 /* Simple.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Simple.frag; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,9 +62,11 @@
 			isa = PBXGroup;
 			children = (
 				1D3623240D0F684500981E51 /* Chapter1_1AppDelegate.h */,
-				1D3623250D0F684500981E51 /* Chapter1_1AppDelegate.m */,
+				1D3623250D0F684500981E51 /* Chapter1_1AppDelegate.mm */,
 				4863D09B130B8E7E0077B8AA /* GLView.h */,
 				4863D09C130B8E7E0077B8AA /* GLView.mm */,
+				EDD622E0130C45F400C42341 /* IRenderingEngine.hpp */,
+				EDD622F0130C4A1800C42341 /* RenderingEngine1.cpp */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -94,6 +103,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				EDD62517130C5DD600C42341 /* Shaders */,
 				28AD733E0D9D9553002E5188 /* MainWindow.xib */,
 				8D1107310486CEB800E47090 /* Chapter1_1-Info.plist */,
 			);
@@ -110,6 +120,15 @@
 				4863D099130B8DE70077B8AA /* QuartzCore.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		EDD62517130C5DD600C42341 /* Shaders */ = {
+			isa = PBXGroup;
+			children = (
+				EDD6251A130C5E1700C42341 /* Simple.vert */,
+				EDD6251C130C5E4700C42341 /* Simple.frag */,
+			);
+			name = Shaders;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -173,8 +192,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
-				1D3623260D0F684500981E51 /* Chapter1_1AppDelegate.m in Sources */,
+				1D3623260D0F684500981E51 /* Chapter1_1AppDelegate.mm in Sources */,
 				4863D09D130B8E7E0077B8AA /* GLView.mm in Sources */,
+				EDD622F1130C4A1800C42341 /* RenderingEngine1.cpp in Sources */,
+				EDD6251B130C5E1700C42341 /* Simple.vert in Sources */,
+				EDD6251D130C5E4700C42341 /* Simple.frag in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

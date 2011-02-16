@@ -7,7 +7,7 @@
 //
 
 #import "GLView.h"
-
+#import <OpenGLES/ES2/gl.h> // <-- for GL_RENDERBUFFER only
 
 @implementation GLView
 
@@ -31,31 +31,45 @@
 			return nil;
 		}
 		
-        // Initialization code.
-		GLuint framebuffer, renderbuffer;
-		glGenFramebuffersOES(1, &framebuffer);
-		glGenRenderbuffersOES(1, &renderbuffer);
+		m_renderingEngine = CreateRenderer1();
 		
-		// Bind
-		glBindFramebufferOES(GL_FRAMEBUFFER_OES, framebuffer);
-		glBindRenderbufferOES(GL_RENDERBUFFER_OES, renderbuffer);
+		// Store render buffer
+		[m_context renderbufferStorage:GL_RENDERBUFFER fromDrawable:eaglLayer];
 		
-		// Store in context
-		[m_context renderbufferStorage:GL_RENDERBUFFER_OES fromDrawable:eaglLayer];
-		glFramebufferRenderbufferOES( GL_FRAMEBUFFER_OES, GL_COLOR_ATTACHMENT0_OES, GL_RENDERBUFFER_OES, renderbuffer);
-		glViewport( 0, 0, CGRectGetWidth(frame), CGRectGetHeight(frame) );
+		// Initialize engine
+		m_renderingEngine->Initialize( CGRectGetWidth(frame), CGRectGetHeight(frame) );
 		
-		// Draw inital
-		[self drawView];
+		
+		m_timestamp = CACurrentMediaTime();
+		CADisplayLink *displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(drawView:)];
+		[displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+
+		[self drawView: displayLink]; // Draw inital
+		
+		// Recieve notifications about turning
+		[[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didRotate:) name:UIDeviceOrientationDidChangeNotification object:nil];
     }
     return self;
 }
 
--(void) drawView
+-(void) didRotate:(NSNotification *)notification
 {
-	glClearColor(0.5f, 0.5f, 0.5f, 0.5f);
-	glClear( GL_COLOR_BUFFER_BIT );
-	[m_context presentRenderbuffer:GL_RENDERBUFFER_OES];
+	UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
+	m_renderingEngine->OnRotate( (DeviceOrientation) orientation );
+	[self drawView: nil];
+}
+- (void) drawView:(CADisplayLink*) displayLink;
+
+{
+	if( displayLink != nil ) {
+		float elapsedSeconds = displayLink.timestamp - m_timestamp;
+		m_timestamp = displayLink.timestamp;
+		m_renderingEngine->UpdateAnimation( elapsedSeconds );
+	}
+	
+	m_renderingEngine->Render();
+	[m_context presentRenderbuffer: GL_RENDERBUFFER];
 }
 
 - (void)dealloc {

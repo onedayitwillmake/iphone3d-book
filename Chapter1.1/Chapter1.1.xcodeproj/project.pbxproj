@@ -16,6 +16,7 @@
 		4863D098130B8DE70077B8AA /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4863D097130B8DE70077B8AA /* OpenGLES.framework */; };
 		4863D09A130B8DE70077B8AA /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4863D099130B8DE70077B8AA /* QuartzCore.framework */; };
 		4863D09D130B8E7E0077B8AA /* GLView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4863D09C130B8E7E0077B8AA /* GLView.mm */; };
+		ED393315130DCF9700A35813 /* RenderingEngine2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ED393314130DCF9700A35813 /* RenderingEngine2.cpp */; };
 		EDD622F1130C4A1800C42341 /* RenderingEngine1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EDD622F0130C4A1800C42341 /* RenderingEngine1.cpp */; };
 		EDD6251B130C5E1700C42341 /* Simple.vert in Sources */ = {isa = PBXBuildFile; fileRef = EDD6251A130C5E1700C42341 /* Simple.vert */; };
 		EDD6251D130C5E4700C42341 /* Simple.frag in Sources */ = {isa = PBXBuildFile; fileRef = EDD6251C130C5E4700C42341 /* Simple.frag */; };
@@ -36,10 +37,11 @@
 		4863D09B130B8E7E0077B8AA /* GLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLView.h; sourceTree = "<group>"; };
 		4863D09C130B8E7E0077B8AA /* GLView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GLView.mm; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Chapter1_1-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Chapter1_1-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
+		ED393314130DCF9700A35813 /* RenderingEngine2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderingEngine2.cpp; sourceTree = "<group>"; };
 		EDD622E0130C45F400C42341 /* IRenderingEngine.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = IRenderingEngine.hpp; sourceTree = "<group>"; };
 		EDD622F0130C4A1800C42341 /* RenderingEngine1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderingEngine1.cpp; sourceTree = "<group>"; };
-		EDD6251A130C5E1700C42341 /* Simple.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Simple.vert; sourceTree = "<group>"; };
-		EDD6251C130C5E4700C42341 /* Simple.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Simple.frag; sourceTree = "<group>"; };
+		EDD6251A130C5E1700C42341 /* Simple.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = Simple.vert; path = Classes/Shaders/Simple.vert; sourceTree = "<group>"; };
+		EDD6251C130C5E4700C42341 /* Simple.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = Simple.frag; path = Classes/Shaders/Simple.frag; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,6 +69,7 @@
 				4863D09C130B8E7E0077B8AA /* GLView.mm */,
 				EDD622E0130C45F400C42341 /* IRenderingEngine.hpp */,
 				EDD622F0130C4A1800C42341 /* RenderingEngine1.cpp */,
+				ED393314130DCF9700A35813 /* RenderingEngine2.cpp */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -82,6 +85,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				EDD62517130C5DD600C42341 /* Shaders */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
@@ -103,7 +107,6 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				EDD62517130C5DD600C42341 /* Shaders */,
 				28AD733E0D9D9553002E5188 /* MainWindow.xib */,
 				8D1107310486CEB800E47090 /* Chapter1_1-Info.plist */,
 			);
@@ -197,6 +200,7 @@
 				EDD622F1130C4A1800C42341 /* RenderingEngine1.cpp in Sources */,
 				EDD6251B130C5E1700C42341 /* Simple.vert in Sources */,
 				EDD6251D130C5E4700C42341 /* Simple.frag in Sources */,
+				ED393315130DCF9700A35813 /* RenderingEngine2.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

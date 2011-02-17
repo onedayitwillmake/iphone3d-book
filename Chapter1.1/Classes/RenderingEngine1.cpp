@@ -47,6 +47,7 @@ IRenderingEngine* CreateRenderer1()
 	return new RenderingEngine1();
 };
 
+
 // Constructor
 RenderingEngine1::RenderingEngine1()
 {

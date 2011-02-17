@@ -6,6 +6,8 @@
 //  Copyright 2011 Whale Island Games. All rights reserved.
 //
 
+const bool ForceES1 = false;
+
 #import "GLView.h"
 #import <OpenGLES/ES2/gl.h> // <-- for GL_RENDERBUFFER only
 
@@ -24,14 +26,30 @@
 		CAEAGLLayer *eaglLayer = (CAEAGLLayer*) super.layer;
 		eaglLayer.opaque = YES;
 		
-		m_context = [[EAGLContext alloc] initWithAPI: kEAGLRenderingAPIOpenGLES1];
+		// Try to load OpenGLES 2.0
+		EAGLRenderingAPI api = kEAGLRenderingAPIOpenGLES2;
+		m_context = [[EAGLContext alloc] initWithAPI:api];
 		
+		// Try to load OpenGLES 1.1
+		if(!m_context || ForceES1) {
+			api = kEAGLRenderingAPIOpenGLES1;
+			m_context = [[EAGLContext alloc] initWithAPI: api];
+		}
+		
+		// Couldn't load either. exit
 		if(!m_context || ![EAGLContext setCurrentContext:m_context]) {
 			[self release];
 			return nil;
 		}
 		
-		m_renderingEngine = CreateRenderer1();
+		// Create the renderer
+		if( api == kEAGLRenderingAPIOpenGLES1 ) {
+			NSLog(@"Using OpenGL ES 1.1");
+			m_renderingEngine = CreateRenderer1();
+		} else {
+			NSLog(@"Using OpenGL ES 2.0");
+			m_renderingEngine = CreateRenderer2();
+		}
 		
 		// Store render buffer
 		[m_context renderbufferStorage:GL_RENDERBUFFER fromDrawable:eaglLayer];

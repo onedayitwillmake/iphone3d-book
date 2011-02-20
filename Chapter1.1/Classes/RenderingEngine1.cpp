@@ -130,17 +130,31 @@ void RenderingEngine1::Render() const
 	glPushMatrix();
 	glRotatef(m_currentAngle, 0, 0, 1);
 	
-		glEnableClientState( GL_VERTEX_ARRAY );
-		glEnableClientState( GL_COLOR_ARRAY );
+	glEnableClientState( GL_VERTEX_ARRAY );
+	
+	const int stride = 2 * sizeof(float);
+	
+	float n = 0.0f; // Nudge
+	float triangles[][2] = { {0+n,0} , {0+n, 1} , {1+n, 1} , {1+n, 1}, {1+n, 0}, {0+n, 0} };
+	glColor4f(0, 1, 0, 1);
+	glVertexPointer(2, GL_FLOAT, stride, triangles);
+	glDrawArrays( GL_TRIANGLES, 0, sizeof(triangles) / stride );
+//		glEnableClientState( GL_COLOR_ARRAY );
+//		
+//		glVertexPointer( 2, GL_FLOAT, sizeof(Vertex), &Vertices[0].Position[0] );
+//		glColorPointer(4, GL_FLOAT, sizeof(Vertex), &Vertices[0].Color[0]);
+//		
+//		GLsizei	vertexCount = sizeof(Vertices) / sizeof(Vertex);
+//		glDrawArrays( GL_TRIANGLES, 0, vertexCount);
 		
-		glVertexPointer( 2, GL_FLOAT, sizeof(Vertex), &Vertices[0].Position[0] );
-		glColorPointer(4, GL_FLOAT, sizeof(Vertex), &Vertices[0].Color[0]);
-		
-		GLsizei	vertexCount = sizeof(Vertices) / sizeof(Vertex);
-		glDrawArrays( GL_TRIANGLES, 0, vertexCount);
-		
-		glDisableClientState( GL_VERTEX_ARRAY );
-		glDisableClientState( GL_COLOR_ARRAY );
+	n = 1.0f;
+	glColor4f(1, 0, 0, 1);
+	float triangleStrip[][2] = { {0+n, 1}, {0+n, 0}, {1+n, 1}, {1+n, 0} };
+	glVertexPointer( 2, GL_FLOAT, stride, triangleStrip );
+	glDrawArrays( GL_TRIANGLE_STRIP, 0, sizeof(triangleStrip) / stride );
+	
+	glDisableClientState( GL_VERTEX_ARRAY );
+//		glDisableClientState( GL_COLOR_ARRAY );
 		
 	glPopMatrix();
 }

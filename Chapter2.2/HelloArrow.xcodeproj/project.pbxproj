@@ -29,6 +29,9 @@
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		32CA4F630368D1EE00C91783 /* HelloArrow_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HelloArrow_Prefix.pch; sourceTree = "<group>"; };
+		482A9C231340355100E57CBB /* Matrix.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Matrix.hpp; sourceTree = "<group>"; };
+		482A9C241340355100E57CBB /* Quaternion.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Quaternion.hpp; sourceTree = "<group>"; };
+		482A9C251340355100E57CBB /* Vector.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Vector.hpp; sourceTree = "<group>"; };
 		4D27E3B10F9ACD8200447247 /* IRenderingEngine.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = IRenderingEngine.hpp; sourceTree = "<group>"; };
 		4D27E3B20F9ACD8200447247 /* RenderingEngine2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderingEngine2.cpp; sourceTree = "<group>"; };
 		4D27E4830F9AD71900447247 /* OpenGLES.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
@@ -63,6 +66,7 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				482A9C271340355500E57CBB /* lib */,
 				4DFA4F810FFAFA13000826CD /* RenderingEngine1.cpp */,
 				4D27E3B10F9ACD8200447247 /* IRenderingEngine.hpp */,
 				4D27E3B20F9ACD8200447247 /* RenderingEngine2.cpp */,
@@ -124,6 +128,16 @@
 				288765FC0DF74451002DB57D /* CoreGraphics.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		482A9C271340355500E57CBB /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				482A9C231340355100E57CBB /* Matrix.hpp */,
+				482A9C241340355100E57CBB /* Quaternion.hpp */,
+				482A9C251340355100E57CBB /* Vector.hpp */,
+			);
+			name = lib;
 			sourceTree = "<group>";
 		};
 		4A89D5250FEF3FC100F039C8 /* Shaders */ = {

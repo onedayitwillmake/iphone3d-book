@@ -33,6 +33,9 @@ public:
     void Render() const;
     void UpdateAnimation(float timeStep);
     void OnRotate(DeviceOrientation newOrientation);
+	void OnFingerUp( ivec2 location );
+	void OnFingerDown( ivec2 location );
+	void OnFingerMove( ivec2 oldLocation, ivec2 newLocation );
 private:
     GLuint BuildShader(const char* source, GLenum shaderType) const;
     GLuint BuildProgram(const char* vShader, const char* fShader) const;
@@ -43,6 +46,10 @@ private:
     GLuint m_framebuffer;
     GLuint m_colorRenderbuffer;
     GLuint m_depthRenderbuffer;
+	
+	GLfloat m_rotationAngle;
+	GLfloat m_scale;
+	ivec2 m_pivotPoint;
 };
 
 IRenderingEngine* CreateRenderer2()
@@ -50,7 +57,7 @@ IRenderingEngine* CreateRenderer2()
     return new RenderingEngine2();
 }
 
-RenderingEngine2::RenderingEngine2()
+RenderingEngine2::RenderingEngine2() : m_rotationAngle(0), m_scale(1)
 {
     // Create & bind the color buffer so that the caller can allocate its space.
     glGenRenderbuffers(1, &m_colorRenderbuffer);
@@ -59,6 +66,8 @@ RenderingEngine2::RenderingEngine2()
 
 void RenderingEngine2::Initialize(int width, int height)
 {
+	m_pivotPoint = ivec2( width/2, height/2 );
+	
     const float coneRadius = 0.5f;
     const float coneHeight = 1.866f;
     const int coneSlices = 40;
@@ -152,6 +161,8 @@ void RenderingEngine2::Initialize(int width, int height)
 
 void RenderingEngine2::Render() const
 {
+	
+	
     GLuint positionSlot = glGetAttribLocation(m_simpleProgram, "Position");
     GLuint colorSlot = glGetAttribLocation(m_simpleProgram, "SourceColor");
 
@@ -160,13 +171,15 @@ void RenderingEngine2::Render() const
     
     glEnableVertexAttribArray(positionSlot);
     glEnableVertexAttribArray(colorSlot);
+	
     
-    mat4 rotation(m_animation.Current.ToMatrix());
-    mat4 translation = mat4::Translate(0, 0, -7);
-
+	mat4 rotation = mat4::Rotate( m_rotationAngle );
+	mat4 scale = mat4::Scale( m_scale );
+	mat4 translation = mat4::Translate( 0, 0, -7 );
+	
     // Set the model-view matrix.
     GLint modelviewUniform = glGetUniformLocation(m_simpleProgram, "Modelview");
-    mat4 modelviewMatrix = rotation * translation;
+    mat4 modelviewMatrix = scale * rotation * translation;
     glUniformMatrix4fv(modelviewUniform, 1, 0, modelviewMatrix.Pointer());
     
     // Draw the cone.
@@ -241,6 +254,32 @@ void RenderingEngine2::OnRotate(DeviceOrientation orientation)
     m_animation.Elapsed = 0;
     m_animation.Start = m_animation.Current = m_animation.End;
     m_animation.End = Quaternion::CreateFromVectors(vec3(0, 1, 0), direction);
+}
+
+
+void RenderingEngine2::OnFingerUp( ivec2 location )
+{
+	m_scale = 1.0f;
+}
+
+void RenderingEngine2::OnFingerDown( ivec2 location )
+{
+	m_scale = 1.5f;
+	OnFingerMove(location, location);
+}
+
+
+void RenderingEngine2::OnFingerMove( ivec2 oldLocation, ivec2 newLocation )
+{
+	vec2 direction = vec2(newLocation - m_pivotPoint).Normalized();
+	
+	// Flip y axis because pixel coords increase toward the bottom
+	direction.y = -direction.y;
+	
+	m_rotationAngle = std::acos( direction.y ) * 180.0f / M_PI;
+	
+	if( direction.x > 0 )
+		m_rotationAngle = -m_rotationAngle;
 }
 
 GLuint RenderingEngine2::BuildShader(const char* source, GLenum shaderType) const

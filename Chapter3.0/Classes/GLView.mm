@@ -1,5 +1,5 @@
 #import "GLView.h"
-
+const bool ForceES1 = true;
 #define GL_RENDERBUFFER 0x8d41
 
 @implementation GLView
@@ -18,7 +18,7 @@
         EAGLRenderingAPI api = kEAGLRenderingAPIOpenGLES2;
         m_context = [[EAGLContext alloc] initWithAPI:api];
 
-        if (!m_context) {
+        if (!m_context || ForceES1 ) {
             api = kEAGLRenderingAPIOpenGLES1;
             m_context = [[EAGLContext alloc] initWithAPI:api];
         }

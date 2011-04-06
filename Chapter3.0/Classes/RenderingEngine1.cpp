@@ -26,12 +26,20 @@ public:
     RenderingEngine1();
     void Initialize(int width, int height);
     void Render() const;
-    void UpdateAnimation(float timeStep);
-    void OnRotate(DeviceOrientation newOrientation);
+    void UpdateAnimation(float timeStep) {};
+    void OnRotate(DeviceOrientation newOrientation) {};
+	void OnFingerUp( ivec2 location );
+	void OnFingerDown( ivec2 location );
+	void OnFingerMove( ivec2 oldLocation, ivec2 newLocation );
+	
 private:
     vector<Vertex> m_cone;
     vector<Vertex> m_disk;
-    Animation m_animation;
+	
+	GLfloat m_rotationAngle;
+	GLfloat	m_scale;
+	ivec2	m_pivotPoint;
+	
     GLuint m_framebuffer;
     GLuint m_colorRenderbuffer;
     GLuint m_depthRenderbuffer;
@@ -42,7 +50,7 @@ IRenderingEngine* CreateRenderer1()
     return new RenderingEngine1();
 }
 
-RenderingEngine1::RenderingEngine1()
+RenderingEngine1::RenderingEngine1() : m_rotationAngle(0), m_scale(1)
 {
     // Create & bind the color buffer so that the caller can allocate its space.
     glGenRenderbuffersOES(1, &m_colorRenderbuffer);
@@ -51,6 +59,8 @@ RenderingEngine1::RenderingEngine1()
 
 void RenderingEngine1::Initialize(int width, int height)
 {
+	m_pivotPoint = ivec2( width/2, height/2);
+	
     const float coneRadius = 0.5f;
     const float coneHeight = 1.866f;
     const int coneSlices = 40;
@@ -140,15 +150,27 @@ void RenderingEngine1::Initialize(int width, int height)
 
 void RenderingEngine1::Render() const
 {
+
+	
     glClearColor(0.5f, 0.5f, 0.5f, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glPushMatrix();
     
+	glRotatef( m_rotationAngle, 0, 0, 1);
+	glScalef( m_scale, m_scale, m_scale );
+	
+	vec2 vertices[6] = { 
+		vec2(0, 0), vec2(0, 1), vec2(1, 1), 
+		vec2(1, 1), vec2(1, 0), vec2(0, 0) 
+	};
+	glVertexPointer(2, GL_FLOAT, sizeof(vec2), (void*) vertices); 
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	
+	
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
+	
 
-    mat4 rotation(m_animation.Current.ToMatrix());
-    glMultMatrixf(rotation.Pointer());
 
     // Draw the cone.
     glVertexPointer(3, GL_FLOAT, sizeof(Vertex), &m_cone[0].Position.x);
@@ -166,53 +188,27 @@ void RenderingEngine1::Render() const
     glPopMatrix();
 }
 
-void RenderingEngine1::UpdateAnimation(float timeStep)
+void RenderingEngine1::OnFingerUp( ivec2 location )
 {
-    if (m_animation.Current == m_animation.End)
-        return;
-
-    m_animation.Elapsed += timeStep;
-    if (m_animation.Elapsed >= AnimationDuration) {
-        m_animation.Current = m_animation.End;
-    } else {
-        float mu = m_animation.Elapsed / AnimationDuration;
-        m_animation.Current = m_animation.Start.Slerp(mu, m_animation.End);
-    }
+	m_scale = 1.0f;
 }
 
-void RenderingEngine1::OnRotate(DeviceOrientation orientation)
+void RenderingEngine1::OnFingerDown( ivec2 location )
 {
-  //  vec3 direction;
-//
-//    switch (orientation) {
-//        case DeviceOrientationUnknown:
-//        case DeviceOrientationPortrait:
-//            direction = vec3(0, 1, 0);
-//            break;
-//            
-//        case DeviceOrientationPortraitUpsideDown:
-//            direction = vec3(0, -1, 0);
-//            break;
-//            
-//        case DeviceOrientationFaceDown:       
-//            direction = vec3(0, 0, -1);
-//            break;
-//            
-//        case DeviceOrientationFaceUp:
-//            direction = vec3(0, 0, 1);
-//            break;
-//            
-//        case DeviceOrientationLandscapeLeft:
-//            direction = vec3(+1, 0, 0);
-//            break;
-//            
-//        case DeviceOrientationLandscapeRight:
-//            direction = vec3(-1, 0, 0);
-//            break;
-//    }
-//
-//    m_animation.Elapsed = 0;
-//    m_animation.Start = m_animation.Current = m_animation.End;
-//    m_animation.End = Quaternion::CreateFromVectors(vec3(0, 1, 0), direction);
+	m_scale = 1.5f;
+	OnFingerMove(location, location);
 }
 
+
+void RenderingEngine1::OnFingerMove( ivec2 oldLocation, ivec2 newLocation )
+{
+	vec2 direction = vec2(newLocation - m_pivotPoint).Normalized();
+	
+	// Flip y axis because pixel coords increase toward the bottom
+	direction.y = -direction.y;
+	
+	m_rotationAngle = std::acos( direction.y ) * 180.0f / M_PI;
+	
+	if( direction.x > 0 )
+		m_rotationAngle = -m_rotationAngle;
+}

@@ -33,8 +33,11 @@ public:
 	void OnFingerMove( ivec2 oldLocation, ivec2 newLocation );
 	
 private:
-    vector<Vertex> m_cone;
-    vector<Vertex> m_disk;
+	
+	vector<Vertex> m_coneVertices;
+	vector<GLubyte> m_coneIndices;
+	GLuint m_bodyIndexCount;
+	GLuint m_diskIndexCount;
 	
 	GLfloat m_rotationAngle;
 	GLfloat	m_scale;
@@ -61,59 +64,61 @@ void RenderingEngine1::Initialize(int width, int height)
 {
 	m_pivotPoint = ivec2( width/2, height/2);
 	
-    const float coneRadius = 0.5f;
-    const float coneHeight = 1.866f;
-    const int coneSlices = 40;
-    
-    {
-        // Allocate space for the cone vertices.
-        m_cone.resize((coneSlices + 1) * 2);
-
-        // Initialize the vertices of the triangle strip.
-        vector<Vertex>::iterator vertex = m_cone.begin();
-        const float dtheta = TwoPi / coneSlices;
-        for (float theta = 0; vertex != m_cone.end(); theta += dtheta) {
-            
-            // Grayscale gradient
-            float brightness = abs(sin(theta));
-            vec4 color(brightness, brightness, brightness, 1);
-            
-            // Apex vertex
-            vertex->Position = vec3(0, 1, 0);
-            vertex->Color = color;
-            vertex++;
-            
-            // Rim vertex
-            vertex->Position.x = coneRadius * cos(theta);
-            vertex->Position.y = 1 - coneHeight;
-            vertex->Position.z = coneRadius * sin(theta);
-            vertex->Color = color;
-            vertex++;
-        }
-    }
-    
-    {
-        // Allocate space for the disk vertices.
-        m_disk.resize(coneSlices + 2);
-
-        // Initialize the center vertex of the triangle fan.
-        vector<Vertex>::iterator vertex = m_disk.begin();
-        vertex->Color = vec4(0.75, 0.75, 0.75, 1);
-        vertex->Position.x = 0;
-        vertex->Position.y = 1 - coneHeight;
-        vertex->Position.z = 0;
-        vertex++;
-
-        // Initialize the rim vertices of the triangle fan.
-        const float dtheta = TwoPi / coneSlices;
-        for (float theta = 0; vertex != m_disk.end(); theta += dtheta) {
-            vertex->Color = vec4(0.75, 0.75, 0.75, 1);
-            vertex->Position.x = coneRadius * cos(theta);
-            vertex->Position.y = 1 - coneHeight;
-            vertex->Position.z = coneRadius * sin(theta);
-            vertex++;
-        }
-    }
+	const float coneRadius = 0.5f;
+	const float coneHeight = 1.866f;
+	const int	coneSlices = 40;
+	const float dtheta = TwoPi / coneSlices;
+	const int vertexCount = coneSlices * 2 + 1;
+	
+	m_coneVertices.resize(vertexCount);
+	vector<Vertex>::iterator vertex = m_coneVertices.begin();
+	
+	// Cone's body
+	for( float theta = 0; vertex != m_coneVertices.end() - 1; theta += dtheta)
+	{
+		float brightness = abs( sin(theta) );
+		vec4 color( abs( sin(theta) ), abs( cos(theta) ), brightness, 1 );
+		
+		// Apex vertex
+		vertex->Position = vec3( 0, 1, 0 );
+		vertex->Color = color;
+		vertex++;
+		
+		// Rim
+		vertex->Position.x = coneRadius * cos(theta);
+		vertex->Position.y = 1.0 - coneHeight;
+		vertex->Position.z = coneRadius * sin(theta);
+		vertex->Color = color;
+		vertex++;
+	}
+	
+	// Disk center
+	vertex->Position = vec3(0, 1.0 - coneHeight, 0);
+	vertex->Color = vec4( 1, 1, 1, 1 );
+	
+	
+	m_bodyIndexCount = coneSlices * 3;
+	m_diskIndexCount = coneSlices * 3;
+	
+	m_coneIndices.resize( m_bodyIndexCount + m_diskIndexCount );
+	vector<GLubyte>::iterator index = m_coneIndices.begin();
+	
+	// Body triangles
+	for( int i = 0; i < coneSlices * 2; i += 2 ) {
+		*index++ = i;
+		*index++ = (i + 1) % ( 2 * coneSlices );
+		*index++ = (i + 3) % ( 2 * coneSlices );
+	}
+	
+	// Disk triangles
+	const int diskCenterIndex = vertexCount + 1;
+	for( int i = 1; i < coneSlices * 2 + 1; i+=2) {
+		*index++ = diskCenterIndex;
+		*index++ = i;
+		*index++ = (i + 2) % ( 2 * coneSlices );
+	}
+	
+	
     
     // Create the depth buffer.
     glGenRenderbuffersOES(1, &m_depthRenderbuffer);
@@ -150,42 +155,34 @@ void RenderingEngine1::Initialize(int width, int height)
 
 void RenderingEngine1::Render() const
 {
-
+	GLsizei stride = sizeof(Vertex);
+	const GLvoid* pCoords = &m_coneVertices[0].Position.x;
+	const GLvoid* pColors = &m_coneVertices[0].Color.x;
 	
-    glClearColor(0.5f, 0.5f, 0.5f, 1);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glPushMatrix();
-    
-	glRotatef( m_rotationAngle, 0, 0, 1);
+	glClearColor( 0.5f, 0.5f, 0.5f, 1 );
+	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+	
+	glPushMatrix();
+	glRotatef( m_rotationAngle, 0, 0, 1 );
 	glScalef( m_scale, m_scale, m_scale );
 	
-	vec2 vertices[6] = { 
-		vec2(0, 0), vec2(0, 1), vec2(1, 1), 
-		vec2(1, 1), vec2(1, 0), vec2(0, 0) 
-	};
-	glVertexPointer(2, GL_FLOAT, sizeof(vec2), (void*) vertices); 
-	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glVertexPointer( 3, GL_FLOAT, stride, pCoords );
+	glColorPointer( 4, GL_FLOAT, stride, pColors );
 	
+	glEnableClientState( GL_VERTEX_ARRAY );
 	
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_COLOR_ARRAY);
+	const GLvoid* bodyIndices = &m_coneIndices[0];
+	const GLvoid* diskIndices = &m_coneVertices[ m_bodyIndexCount ];
 	
-
-
-    // Draw the cone.
-    glVertexPointer(3, GL_FLOAT, sizeof(Vertex), &m_cone[0].Position.x);
-    glColorPointer(4, GL_FLOAT, sizeof(Vertex),  &m_cone[0].Color.x);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, m_cone.size());
-
-    // Draw the disk that caps off the base of the cone.
-    glVertexPointer(3, GL_FLOAT, sizeof(Vertex), &m_disk[0].Position.x);
-    glColorPointer(4, GL_FLOAT, sizeof(Vertex), &m_disk[0].Color.x);
-    glDrawArrays(GL_TRIANGLE_FAN, 0, m_disk.size());
-    
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_COLOR_ARRAY);
-
-    glPopMatrix();
+	glEnableClientState( GL_COLOR_ARRAY );
+	glDrawElements( GL_TRIANGLES, m_bodyIndexCount, GL_UNSIGNED_BYTE, bodyIndices );
+	glDisableClientState( GL_COLOR_ARRAY );
+	
+	glColor4f( 0, 0.5, 1, 1 );
+	glDrawElements( GL_TRIANGLES, m_diskIndexCount, GL_UNSIGNED_BYTE,  diskIndices );
+	
+	glDisableClientState( GL_VERTEX_ARRAY );
+	glPopMatrix();
 }
 
 void RenderingEngine1::OnFingerUp( ivec2 location )

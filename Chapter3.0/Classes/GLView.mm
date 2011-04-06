@@ -1,5 +1,5 @@
 #import "GLView.h"
-const bool ForceES1 = true;
+const bool ForceES1 = false;
 #define GL_RENDERBUFFER 0x8d41
 
 @implementation GLView

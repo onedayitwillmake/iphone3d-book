@@ -1,7 +1,6 @@
 #import "GLView.h"
-#import <OpenGLES/ES2/gl.h> // <-- for GL_RENDERBUFFER only
 
-const bool ForceES1 = false;
+#define GL_RENDERBUFFER 0x8d41
 
 @implementation GLView
 
@@ -19,7 +18,7 @@ const bool ForceES1 = false;
         EAGLRenderingAPI api = kEAGLRenderingAPIOpenGLES2;
         m_context = [[EAGLContext alloc] initWithAPI:api];
 
-        if (!m_context || ForceES1) {
+        if (!m_context) {
             api = kEAGLRenderingAPIOpenGLES1;
             m_context = [[EAGLContext alloc] initWithAPI:api];
         }
@@ -82,5 +81,28 @@ const bool ForceES1 = false;
     m_renderingEngine->Render();
     [m_context presentRenderbuffer:GL_RENDERBUFFER];
 }
+
+-(void) touchesBegan:(NSSet*)touches withEvent:(UIEvent*)event
+{
+	UITouch* touch = [touches anyObject];
+	CGPoint location = [touch locationInView: self];
+	m_renderingEngine->OnFingerDown( ivec2(location.x, location.y) );
+}
+
+-(void) touchesMoved:(NSSet*)touches withEvent:(UIEvent*)event
+{
+	UITouch* touch = [touches anyObject];
+	CGPoint location = [touch locationInView: self];
+	m_renderingEngine->OnFingerUp( ivec2(location.x, location.y) );
+}
+
+-(void) touchesEnded:(NSSet*)touches withEvent:(UIEvent*)event
+{
+	UITouch* touch = [touches anyObject];
+	CGPoint previous = [touch previousLocationInView: self];
+	CGPoint current  = [touch locationInView: self];
+	m_renderingEngine->OnFingerMove( ivec2(previous.x, previous.y), ivec2(current.x, current.y) );
+}
+
 
 @end
